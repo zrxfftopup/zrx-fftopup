@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -5,27 +6,157 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZRX FfTop up</title>
 <style>
-body{background:#07110b;color:white;font-family:Arial,sans-serif;text-align:center;padding:25px 10px}
-h1{color:#39ef79}
-.card{max-width:350px;margin:25px auto;padding:20px;border:1px solid #39ef79;border-radius:15px;background:#102018}
-button{background:#39ef79;color:#07110b;padding:12px 22px;border:0;border-radius:8px;font-weight:bold}
+body {
+  background: #07110b;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px 12px;
+}
+h1 { color: #39ef79; }
+.card {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #39ef79;
+  border-radius: 16px;
+  background: #102018;
+}
+button, select, input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border-radius: 8px;
+  font-size: 16px;
+}
+button {
+  background: #39ef79;
+  color: #07110b;
+  border: none;
+  font-weight: bold;
+}
+input, select {
+  background: #07110b;
+  color: white;
+  border: 1px solid #39ef79;
+}
+label {
+  display: block;
+  text-align: left;
+  margin-top: 12px;
+}
+.hidden { display: none; }
+.note { color: #c4d5c9; font-size: 14px; }
 </style>
 </head>
 <body>
+
 <h1>ZRX FfTop up</h1>
 <p>Zero Reign Xtreme</p>
-<div class="card">
-<h2>💎 Free Fire Diamond Store</h2>
-<p>তোমার বিশ্বস্ত ডায়মন্ড টপ-আপ স্টোর</p>
-<p>ডায়মন্ড প্যাকেজ শিগগিরই আসছে!</p>
-<button onclick="document.getElementById('packages').style.display='block'">Get Started</button>
 
-<div id="packages" style="display:none; margin-top:20px;">
+<div class="card">
+  <h2>💎 Free Fire Diamond Store</h2>
+  <p>তোমার বিশ্বস্ত ডায়মন্ড টপ-আপ স্টোর</p>
+  <button onclick="showPackages()">Get Started</button>
+</div>
+
+<div class="card hidden" id="packages">
   <h2>💎 ডায়মন্ড প্যাকেজ</h2>
-  <p>২৫ ডায়মন্ড — মূল্য পরে যোগ হবে</p>
-  <p>৫০ ডায়মন্ড — মূল্য পরে যোগ হবে</p>
-  <p>১০০ ডায়মন্ড — মূল্য পরে যোগ হবে</p>
+  <button onclick="choosePackage('25 Diamonds')">25 Diamonds</button>
+  <button onclick="choosePackage('50 Diamonds')">50 Diamonds</button>
+  <button onclick="choosePackage('100 Diamonds')">100 Diamonds</button>
+  <p class="note">প্যাকেজের মূল্য অর্ডার নেওয়ার আগে নির্ধারণ করতে হবে।</p>
 </div>
+
+<div class="card hidden" id="order">
+  <h2>🧾 অর্ডার ফর্ম</h2>
+
+  <form id="orderForm">
+    <label>ডায়মন্ড প্যাকেজ</label>
+    <select id="package" required>
+      <option value="">প্যাকেজ বেছে নাও</option>
+      <option>25 Diamonds</option>
+      <option>50 Diamonds</option>
+      <option>100 Diamonds</option>
+    </select>
+
+    <label>Free Fire Player ID</label>
+    <input id="playerId" type="text"
+      inputmode="numeric" placeholder="তোমার Player ID"
+      required>
+
+    <label>পেমেন্ট পদ্ধতি</label>
+    <select id="payment" required>
+      <option value="">পদ্ধতি বেছে নাও</option>
+      <option value="Rocket">Rocket</option>
+      <option value="Nagad">Nagad</option>
+    </select>
+
+    <label>পেমেন্ট নম্বর</label>
+    <p id="payNumber">01345404312</p>
+    <p class="note">
+      টাকা পাঠানোর আগে নির্বাচিত পেমেন্ট অ্যাকাউন্টটি
+      নিশ্চিত করে নাও।
+    </p>
+
+    <label>যে নম্বর থেকে টাকা পাঠিয়েছ</label>
+    <input id="sender" type="tel"
+      placeholder="তোমার পেমেন্ট নম্বর" required>
+
+    <label>Transaction ID (TrxID)</label>
+    <input id="trxid" type="text"
+      placeholder="Transaction ID লিখো" required>
+
+    <button type="submit">অর্ডার প্রস্তুত করো</button>
+  </form>
+
+  <p class="note" id="result"></p>
 </div>
+
+<script>
+function showPackages() {
+  document.getElementById("packages").style.display = "block";
+  document.getElementById("packages").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function choosePackage(name) {
+  document.getElementById("package").value = name;
+  document.getElementById("order").style.display = "block";
+  document.getElementById("order").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+document.getElementById("payment").addEventListener("change", function() {
+  document.getElementById("payNumber").textContent = "01345404312";
+});
+
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const order = {
+    package: document.getElementById("package").value,
+    playerId: document.getElementById("playerId").value.trim(),
+    payment: document.getElementById("payment").value,
+    sender: document.getElementById("sender").value.trim(),
+    trxid: document.getElementById("trxid").value.trim()
+  };
+
+  if (!order.playerId || !order.sender || !order.trxid) {
+    document.getElementById("result").textContent =
+      "সব তথ্য পূরণ করো।";
+    return;
+  }
+
+  document.getElementById("result").textContent =
+    "ফর্ম পূরণ হয়েছে। এখনো অর্ডার পাঠানো হয়নি। " +
+    "অর্ডার গ্রহণের ব্যবস্থা যুক্ত করা বাকি।";
+});
+</script>
+
 </body>
 </html>
+
